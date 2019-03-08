@@ -18,6 +18,12 @@ namespace Microsoft.Graph
             this.serializer = serializer;
         }
 
+        /// <summary>
+        /// Process raw HTTP response into requested domain type.
+        /// </summary>
+        /// <typeparam name="T">The type to return</typeparam>
+        /// <param name="response">The HttpResponseMessage to handle</param>
+        /// <returns></returns>
         public async Task<T> HandleResponse<T>(HttpResponseMessage response)
         {
             if (response.Content != null)
