@@ -48,6 +48,7 @@ namespace Microsoft.Graph
         /// <returns>The <see cref="HttpResponseMessage"/>.</returns>
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
+            request.SetFeatureFlag(FeatureFlag.RedirectHandler);
             RedirectOption = request.GetMiddlewareOption<RedirectHandlerOption>() ?? RedirectOption;
 
             // send request first time to get response

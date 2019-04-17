@@ -111,6 +111,8 @@ namespace Microsoft.Graph
             // Authenticate request using AuthenticationProvider
             if (authProvider != null)
             {
+                httpRequestMessage.SetFeatureFlag(FeatureFlag.AuthHandler);
+
                 await authProvider.AuthenticateRequestAsync(httpRequestMessage);
 
                 HttpResponseMessage response = await base.SendAsync(httpRequestMessage, cancellationToken);

@@ -11,24 +11,21 @@ namespace Microsoft.Graph
     using System.Reflection;
     using System.Net.Http.Headers;
 
-
     /// <summary>
     /// GraphClientFactory class to create the HTTP client
     /// </summary>
     internal static class GraphClientFactory
     {
-
-
         /// The key for the SDK version header.
-        private static readonly string SdkVersionHeaderName = CoreConstants.Headers.SdkVersionHeaderName;
+        private static readonly string sdkVersionHeaderName = CoreConstants.Headers.SdkVersionHeaderName;
 
         /// The version for current assembly.
         private static Version assemblyVersion = typeof(GraphClientFactory).GetTypeInfo().Assembly.GetName().Version;
 
         /// The value for the SDK version header.
-        private static string SdkVersionHeaderValue = string.Format(
+        private static string sdkVersionHeaderValue = string.Format(
                     CoreConstants.Headers.SdkVersionHeaderValueFormatString,
-                    "Graph",
+                    "graph",
                     assemblyVersion.Major,
                     assemblyVersion.Minor,
                     assemblyVersion.Build);
@@ -47,8 +44,6 @@ namespace Microsoft.Graph
                 { China_Cloud, "https://microsoftgraph.chinacloudapi.cn" },
                 { Germany_Cloud, "https://graph.microsoft.de" }
             };
-
-        private static FeatureFlag featureFlags;
 
         /// Global endpoint
         public const string Global_Cloud = "Global";
@@ -89,18 +84,9 @@ namespace Microsoft.Graph
         /// <returns>An <see cref="HttpClient"/> instance with the configured handlers.</returns>
         public static HttpClient Create(string version = "v1.0", string nationalCloud = Global_Cloud, IEnumerable<DelegatingHandler> handlers = null)
         {
-            HttpMessageHandler pipeline;
-            if (handlers == null)
-            {
-                pipeline = CreatePipeline(CreateDefaultHandlers(), DefaultHttpHandler());
-            } else
-            {
-                pipeline = CreatePipeline(handlers, DefaultHttpHandler());
-            }
-
+            HttpMessageHandler pipeline = CreatePipeline(handlers ?? CreateDefaultHandlers());
             HttpClient client = new HttpClient(pipeline);
-            client.DefaultRequestHeaders.Add(SdkVersionHeaderName, SdkVersionHeaderValue);
-            client.SetFeatureFlags(featureFlags);
+            client.DefaultRequestHeaders.Add(sdkVersionHeaderName, sdkVersionHeaderValue);
             client.Timeout = defaultTimeout;
             client.BaseAddress = DetermineBaseAddress(nationalCloud, version);
             client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue { NoCache = true, NoStore = true };
@@ -113,11 +99,10 @@ namespace Microsoft.Graph
         /// <returns></returns>
         public static IEnumerable<DelegatingHandler> CreateDefaultHandlers()
         {
-            featureFlags = FeatureFlag.RetryHandler | FeatureFlag.RedirectHandler;
-
             return new List<DelegatingHandler> {
                 new RetryHandler(),
-                new RedirectHandler()
+                new RedirectHandler(),
+                new TelemetryHandler()
             };
         }
 
@@ -176,8 +161,6 @@ namespace Microsoft.Graph
 
             return pipeline;
         }
-
-
 
         ///// <summary>
         ///// Configure an instance of an <see cref="HttpClient"/>

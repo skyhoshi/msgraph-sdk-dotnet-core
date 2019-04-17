@@ -63,15 +63,14 @@ namespace Microsoft.Graph
 
             DelegatingHandler[] handlers = new DelegatingHandler[]
             {
-                new RedirectHandler(),
+                new AuthenticationHandler(null),
                 new RetryHandler(),
-                new AuthenticationHandler(null)
+                new RedirectHandler(),
+                new TelemetryHandler(FeatureFlag.DefaultHttpProvider)
             };
 
             GraphClientFactory.DefaultHttpHandler = () => this.httpMessageHandler;
             this.httpClient = GraphClientFactory.Create("v1.0", GraphClientFactory.Global_Cloud, handlers);
-            this.httpClient.SetFeatureFlags(FeatureFlag.RedirectHandler | FeatureFlag.RetryHandler | FeatureFlag.AuthHandler |
-                FeatureFlag.DefaultHttpProvider);
         }
 
         /// <summary>

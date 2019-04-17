@@ -305,13 +305,12 @@ namespace Microsoft.Graph
         /// <param name="cancellationToken">A <see cref="CancellationToken"/></param>
         private void AddRequestContextToRequest(HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken)
         {
-            // Creates a request context object
+            // Creates a new request context object.
             var requestContext = new GraphRequestContext
             {
                 MiddlewareOptions = MiddlewareOptions,
                 ClientRequestId = GetHeaderValue(httpRequestMessage, CoreConstants.Headers.ClientRequestId) ?? Guid.NewGuid().ToString(),
-                CancellationToken = cancellationToken,
-                FeatureUsage = httpRequestMessage.GetFeatureFlags()
+                CancellationToken = cancellationToken
             };
 
             httpRequestMessage.Properties.Add(typeof(GraphRequestContext).ToString(), requestContext);

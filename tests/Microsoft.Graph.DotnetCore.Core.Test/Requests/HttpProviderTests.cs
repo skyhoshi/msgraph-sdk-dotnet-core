@@ -45,7 +45,7 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
             {
                 Assert.False(defaultHttpProvider.httpClient.DefaultRequestHeaders.CacheControl.NoCache);
                 Assert.False(defaultHttpProvider.httpClient.DefaultRequestHeaders.CacheControl.NoStore);
-                Assert.True(defaultHttpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.FeatureFlag));
+                Assert.True(defaultHttpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.SdkVersionHeaderName));
                 Assert.Equal(timeout, defaultHttpProvider.httpClient.Timeout);
                 Assert.NotNull(defaultHttpProvider.Serializer);
                 Assert.IsType(typeof(Serializer), defaultHttpProvider.Serializer);
@@ -59,7 +59,7 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
             using (var httpProvider = new HttpProvider(httpClientHandler, false, null))
             {
                 Assert.Equal(httpClientHandler, httpProvider.httpMessageHandler);
-                Assert.True(httpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.FeatureFlag));
+                Assert.True(httpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.SdkVersionHeaderName));
                 Assert.False(httpProvider.disposeHandler);
             }
         }
@@ -71,7 +71,7 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
             {
                 Assert.True(defaultHttpProvider.httpClient.DefaultRequestHeaders.CacheControl.NoCache);
                 Assert.True(defaultHttpProvider.httpClient.DefaultRequestHeaders.CacheControl.NoStore);
-                Assert.True(defaultHttpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.FeatureFlag));
+                Assert.True(defaultHttpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.SdkVersionHeaderName));
                 Assert.True(defaultHttpProvider.disposeHandler);
                 Assert.NotNull(defaultHttpProvider.httpMessageHandler);
                 Assert.False(((HttpClientHandler)defaultHttpProvider.httpMessageHandler).AllowAutoRedirect);
@@ -88,7 +88,7 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
             using (var httpProvider = new HttpProvider(this.testHttpMessageHandler, false, null))
             {
                 Assert.NotNull(httpProvider.httpMessageHandler);
-                Assert.True(httpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.FeatureFlag));
+                Assert.True(httpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.SdkVersionHeaderName));
                 Assert.Equal(httpProvider.httpMessageHandler, this.testHttpMessageHandler);
                 Assert.False(httpProvider.disposeHandler);
                 Assert.IsType(typeof(Serializer), httpProvider.Serializer);
@@ -131,7 +131,7 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
                 this.testHttpMessageHandler.AddResponseMapping(httpRequestMessage.RequestUri.ToString(), httpResponseMessage);
                 this.AddGraphRequestContextToRequest(httpRequestMessage);
                 var returnedResponseMessage = await this.httpProvider.SendAsync(httpRequestMessage);
-                Assert.True(returnedResponseMessage.RequestMessage.Headers.Contains(CoreConstants.Headers.FeatureFlag));
+                Assert.True(returnedResponseMessage.RequestMessage.Headers.Contains(CoreConstants.Headers.SdkVersionHeaderName));
                 Assert.Equal(httpResponseMessage, returnedResponseMessage);
             }
         }

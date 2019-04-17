@@ -51,7 +51,7 @@ namespace Microsoft.Graph.Core.Test.Requests
                 Assert.IsFalse(defaultHttpProvider.httpClient.DefaultRequestHeaders.CacheControl.NoCache, "NoCache true.");
                 Assert.IsFalse(defaultHttpProvider.httpClient.DefaultRequestHeaders.CacheControl.NoStore, "NoStore true.");
                 Assert.AreEqual(timeout, defaultHttpProvider.httpClient.Timeout, "Unexpected default timeout set.");
-                Assert.IsTrue(defaultHttpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.FeatureFlag), "FeatureFlag header not set.");
+                Assert.IsTrue(defaultHttpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.SdkVersionHeaderName), "SdkVersion header not set.");
                 Assert.IsNotNull(defaultHttpProvider.Serializer, "Serializer not initialized.");
                 Assert.IsInstanceOfType(defaultHttpProvider.Serializer, typeof(Serializer), "Unexpected serializer initialized.");
             }
@@ -64,7 +64,7 @@ namespace Microsoft.Graph.Core.Test.Requests
             using (var httpProvider = new HttpProvider(httpClientHandler, false, null))
             {
                 Assert.AreEqual(httpClientHandler, httpProvider.httpMessageHandler, "Unexpected message handler set.");
-                Assert.IsTrue(httpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.FeatureFlag), "FeatureFlag header not set.");
+                Assert.IsTrue(httpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.SdkVersionHeaderName), "SdkVersion header not set.");
                 Assert.IsFalse(httpProvider.disposeHandler, "Dispose handler set to true.");
             }
         }
@@ -76,7 +76,7 @@ namespace Microsoft.Graph.Core.Test.Requests
             {
                 Assert.IsTrue(defaultHttpProvider.httpClient.DefaultRequestHeaders.CacheControl.NoCache, "NoCache false.");
                 Assert.IsTrue(defaultHttpProvider.httpClient.DefaultRequestHeaders.CacheControl.NoStore, "NoStore false.");
-                Assert.IsTrue(defaultHttpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.FeatureFlag), "FeatureFlag header not set.");
+                Assert.IsTrue(defaultHttpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.SdkVersionHeaderName), "SdkVersion header not set.");
                 Assert.IsTrue(defaultHttpProvider.disposeHandler, "Dispose handler set to false.");
                 Assert.IsNotNull(defaultHttpProvider.httpMessageHandler, "HttpClientHandler not initialized.");
                 Assert.IsFalse(((HttpClientHandler)defaultHttpProvider.httpMessageHandler).AllowAutoRedirect, "AllowAutoRedirect set to true.");
@@ -93,7 +93,7 @@ namespace Microsoft.Graph.Core.Test.Requests
            
             using (var httpProvider = new HttpProvider(this.testHttpMessageHandler, true, null))
             {
-                Assert.IsTrue(httpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.FeatureFlag));
+                Assert.IsTrue(httpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.SdkVersionHeaderName));
                 Assert.IsNotNull(httpProvider.httpMessageHandler, "HttpMessageHandler not initialized");
                 Assert.AreEqual(httpProvider.httpMessageHandler, this.testHttpMessageHandler, "Unexpected message handler set.");
                 Assert.IsTrue(httpProvider.disposeHandler, "Dispose Handler set to false");
@@ -143,7 +143,7 @@ namespace Microsoft.Graph.Core.Test.Requests
 
                 var returnedResponseMessage = await this.httpProvider.SendAsync(httpRequestMessage);
 
-                Assert.IsTrue(returnedResponseMessage.RequestMessage.Headers.Contains(CoreConstants.Headers.FeatureFlag), "FeatureFlag header not set.");
+                Assert.IsTrue(returnedResponseMessage.RequestMessage.Headers.Contains(CoreConstants.Headers.SdkVersionHeaderName), "SdkVersion header not set.");
                 Assert.AreEqual(httpResponseMessage, returnedResponseMessage, "Unexpected response returned.");
             }
         }

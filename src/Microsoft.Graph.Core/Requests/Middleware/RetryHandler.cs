@@ -57,6 +57,7 @@ namespace Microsoft.Graph
         protected async override Task<HttpResponseMessage> SendAsync(HttpRequestMessage httpRequest, CancellationToken cancellationToken)
         {
             RetryOption = httpRequest.GetMiddlewareOption<RetryHandlerOption>() ?? RetryOption;
+            httpRequest.SetFeatureFlag(FeatureFlag.RetryHandler);
 
             var response = await base.SendAsync(httpRequest, cancellationToken);
 

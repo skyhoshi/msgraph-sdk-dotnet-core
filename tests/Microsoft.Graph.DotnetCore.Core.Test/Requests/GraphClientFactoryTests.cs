@@ -147,7 +147,7 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
                 Version assemblyVersion = typeof(GraphClientFactory).GetTypeInfo().Assembly.GetName().Version;
                 string value = string.Format(
                     CoreConstants.Headers.SdkVersionHeaderValueFormatString,
-                    "Graph",
+                    "graph",
                     assemblyVersion.Major,
                     assemblyVersion.Minor,
                     assemblyVersion.Build);
