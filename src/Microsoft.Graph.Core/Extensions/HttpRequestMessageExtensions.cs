@@ -34,20 +34,25 @@ namespace Microsoft.Graph
         }
 
         /// <summary>
-        /// Get's feature request header value from the incoming <see cref="HttpRequestMessage"/>
+        /// Sets GraphRequestContext.FeatureUsage to incoming <see cref="HttpRequestMessage"/>
         /// </summary>
         /// <param name="httpRequestMessage">The <see cref="HttpRequestMessage"/> object</param>
+        /// <param name="featureFlag">Feature flag value to set.</param>
         /// <returns></returns>
-        internal static FeatureFlag GetFeatureFlags(this HttpRequestMessage httpRequestMessage)
+        internal static void SetFeatureFlag(this HttpRequestMessage httpRequestMessage, FeatureFlag featureFlag)
         {
-            httpRequestMessage.Headers.TryGetValues(CoreConstants.Headers.FeatureFlag, out IEnumerable<string> flags);
+            string requestContentKey = typeof(GraphRequestContext).ToString();
 
-            if (!Enum.TryParse(flags?.FirstOrDefault(), out FeatureFlag featureFlag))
+            if (httpRequestMessage.Properties.ContainsKey(requestContentKey))
             {
-                featureFlag = FeatureFlag.None;
+                (httpRequestMessage.Properties[requestContentKey] as GraphRequestContext).FeatureUsage |= featureFlag;
             }
-
-            return featureFlag;
+            else
+            {
+                GraphRequestContext requestContent = new GraphRequestContext();
+                requestContent.FeatureUsage |= featureFlag;
+                httpRequestMessage.Properties.Add(requestContentKey, requestContent);
+            }
         }
 
         /// <summary>

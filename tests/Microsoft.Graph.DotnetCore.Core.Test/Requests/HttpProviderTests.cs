@@ -7,7 +7,6 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
     using Microsoft.Graph.DotnetCore.Core.Test.Mocks;
     using Moq;
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Net;
@@ -15,6 +14,7 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
     using System.Net.Http.Headers;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Collections.Generic;
     using Xunit;
     public class HttpProviderTests : IDisposable
     {
@@ -48,7 +48,6 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
             {
                 Assert.False(defaultHttpProvider.httpClient.DefaultRequestHeaders.CacheControl.NoCache);
                 Assert.False(defaultHttpProvider.httpClient.DefaultRequestHeaders.CacheControl.NoStore);
-                Assert.True(defaultHttpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.FeatureFlag));
                 Assert.Equal(timeout, defaultHttpProvider.httpClient.Timeout);
                 Assert.NotNull(defaultHttpProvider.Serializer);
                 Assert.IsType<Serializer>(defaultHttpProvider.Serializer);
@@ -62,7 +61,6 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
             using (var httpProvider = new HttpProvider(httpClientHandler, false, null))
             {
                 Assert.Equal(httpClientHandler, httpProvider.httpMessageHandler);
-                Assert.True(httpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.FeatureFlag));
                 Assert.False(httpProvider.disposeHandler);
             }
         }
@@ -74,7 +72,6 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
             {
                 Assert.True(defaultHttpProvider.httpClient.DefaultRequestHeaders.CacheControl.NoCache);
                 Assert.True(defaultHttpProvider.httpClient.DefaultRequestHeaders.CacheControl.NoStore);
-                Assert.True(defaultHttpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.FeatureFlag));
                 Assert.True(defaultHttpProvider.disposeHandler);
                 Assert.NotNull(defaultHttpProvider.httpMessageHandler);
                 Assert.Equal(TimeSpan.FromSeconds(100), defaultHttpProvider.httpClient.Timeout);
@@ -98,7 +95,6 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
             using (var httpProvider = new HttpProvider(this.testHttpMessageHandler, false, null))
             {
                 Assert.NotNull(httpProvider.httpMessageHandler);
-                Assert.True(httpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.FeatureFlag));
                 Assert.Equal(httpProvider.httpMessageHandler, this.testHttpMessageHandler);
                 Assert.False(httpProvider.disposeHandler);
                 Assert.IsType<Serializer>(httpProvider.Serializer);
@@ -113,8 +109,10 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
             {
                 this.testHttpMessageHandler.AddResponseMapping(httpRequestMessage.RequestUri.ToString(), httpResponseMessage);
                 this.AddGraphRequestContextToRequest(httpRequestMessage);
-                var returnedResponseMessage = await this.httpProvider.SendAsync(httpRequestMessage);
-                Assert.True(returnedResponseMessage.RequestMessage.Headers.Contains(CoreConstants.Headers.FeatureFlag));
+                HttpResponseMessage returnedResponseMessage = await this.httpProvider.SendAsync(httpRequestMessage);
+
+                Assert.True(returnedResponseMessage.RequestMessage.Headers.Contains(CoreConstants.Headers.SdkVersionHeaderName));
+                Assert.True(returnedResponseMessage.RequestMessage.Headers.Contains(CoreConstants.Headers.ClientRequestId));
                 Assert.Equal(httpResponseMessage, returnedResponseMessage);
             }
         }
@@ -198,7 +196,7 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
 
                 var returnedResponseMessage = await this.httpProvider.SendAsync(httpRequestMessage);
 
-                Assert.Equal(4, finalResponseMessage.RequestMessage.Headers.Count());
+                Assert.Equal(5, finalResponseMessage.RequestMessage.Headers.Count());
 
                 foreach (var header in httpRequestMessage.Headers)
                 {
@@ -421,7 +419,7 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
             using (var httpProvider = new HttpProvider(httpClientHandler, false, null))
             {
                 Assert.Equal(httpClientHandler, httpProvider.httpMessageHandler);
-                Assert.True(httpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.FeatureFlag));
+                Assert.True(httpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.FeatureUsage));
                 Assert.False(httpProvider.disposeHandler);
                 Assert.Same((httpProvider.httpMessageHandler as Xamarin.Android.Net.AndroidClientHandler).Proxy, proxy);
             }
@@ -438,7 +436,7 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
             using (var httpProvider = new HttpProvider(httpClientHandler, false, null))
             {
                 Assert.Equal(httpClientHandler, httpProvider.httpMessageHandler);
-                Assert.True(httpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.FeatureFlag));
+                Assert.True(httpProvider.httpClient.DefaultRequestHeaders.Contains(CoreConstants.Headers.FeatureUsage));
                 Assert.False(httpProvider.disposeHandler);
             }
         }

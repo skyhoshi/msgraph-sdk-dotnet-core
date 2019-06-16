@@ -66,14 +66,18 @@ namespace Microsoft.Graph
             if (this.httpMessageHandler == null)
             {
                 this.httpMessageHandler = GraphClientFactory.GetNativePlatformHttpHandler();
-                this.httpClient = GraphClientFactory.Create(authenticationProvider: null, version: "v1.0", nationalCloud: GraphClientFactory.Global_Cloud, finalHandler: this.httpMessageHandler);
+                IList<DelegatingHandler> handlers = GraphClientFactory.CreateDefaultHandlers(null);
+                this.httpClient = GraphClientFactory.Create(
+                    handlers: handlers,
+                    version: "v1.0",
+                    nationalCloud: GraphClientFactory.Global_Cloud,
+                    finalHandler: this.httpMessageHandler,
+                    callerFeatureFlag: FeatureFlag.DefaultHttpProvider);
             }
             else
             {
                 this.httpClient = new HttpClient(this.httpMessageHandler, this.disposeHandler);
             } 
-
-            this.httpClient.SetFeatureFlag(FeatureFlag.DefaultHttpProvider);
         }
 
         /// <summary>

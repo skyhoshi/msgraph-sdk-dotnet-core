@@ -35,20 +35,21 @@ namespace Microsoft.Graph
         /// <summary>
         /// Sends a HTTP request.
         /// </summary>
-        /// <param name="httpRequest">The <see cref="HttpRequestMessage"/> to be sent.</param>
+        /// <param name="httpRequestMessage">The <see cref="HttpRequestMessage"/> to be sent.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns></returns>
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage httpRequest, CancellationToken cancellationToken)
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken)
         {
             StringWithQualityHeaderValue gzipQHeaderValue = new StringWithQualityHeaderValue(CoreConstants.Encoding.GZip);
 
             // Add Accept-encoding: gzip header to incoming request if it doesn't have one.
-            if (!httpRequest.Headers.AcceptEncoding.Contains(gzipQHeaderValue))
+            if (!httpRequestMessage.Headers.AcceptEncoding.Contains(gzipQHeaderValue))
             {
-                httpRequest.Headers.AcceptEncoding.Add(gzipQHeaderValue);
+                httpRequestMessage.Headers.AcceptEncoding.Add(gzipQHeaderValue);
             }
 
-            HttpResponseMessage response = await base.SendAsync(httpRequest, cancellationToken);
+            httpRequestMessage.SetFeatureFlag(FeatureFlag.CompressionHandler);
+            HttpResponseMessage response = await base.SendAsync(httpRequestMessage, cancellationToken);
 
             // Decompress response content when Content-Encoding: gzip header is present.
             if (ShouldDecompressContent(response))

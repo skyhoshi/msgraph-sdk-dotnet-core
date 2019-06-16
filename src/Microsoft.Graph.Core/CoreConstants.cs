@@ -28,7 +28,7 @@ namespace Microsoft.Graph
             public const string SdkVersionHeaderName = "SdkVersion";
 
             /// SDK Version header
-            public const string SdkVersionHeaderValueFormatString = "{0}-dotnet-{1}.{2}.{3}";
+            public const string SdkVersionHeaderValueFormatString = "{0}-dotnet/{1}.{2}.{3}";
 
             /// Content-Type header
             public const string FormUrlEncodedContentType = "application/x-www-form-urlencoded";
@@ -39,8 +39,8 @@ namespace Microsoft.Graph
             /// Client Request Id
             public const string ClientRequestId = "client-request-id";
 
-            /// Feature Flag
-            public const string FeatureFlag = "FeatureFlag";
+            /// Feature Usage
+            public const string FeatureUsage = "featureUsage";
 
         }
 

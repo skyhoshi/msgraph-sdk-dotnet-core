@@ -18,7 +18,7 @@ namespace Microsoft.Graph
         internal static void SetFeatureFlag(this HttpClient httpClient, FeatureFlag featureFlag)
         {
             // If feature flag header exists, add incoming flag to existing bitfield values and replace existing header with the computed bitfield total.
-            if (httpClient.DefaultRequestHeaders.TryGetValues(CoreConstants.Headers.FeatureFlag, out var flags))
+            if (httpClient.DefaultRequestHeaders.TryGetValues(CoreConstants.Headers.FeatureUsage, out var flags))
             {
                 // Add incoming flag to existing feature flag values.
                 foreach (string flag in flags)
@@ -26,11 +26,11 @@ namespace Microsoft.Graph
                         featureFlag |= targetFeatureFlag;
 
                 // Remove current header value.
-                httpClient.DefaultRequestHeaders.Remove(CoreConstants.Headers.FeatureFlag);
+                httpClient.DefaultRequestHeaders.Remove(CoreConstants.Headers.FeatureUsage);
             }
 
             // Add/Replace new computed bitfield.
-            httpClient.DefaultRequestHeaders.Add(CoreConstants.Headers.FeatureFlag, Enum.Format(typeof(FeatureFlag), featureFlag, "x"));
+            httpClient.DefaultRequestHeaders.Add(CoreConstants.Headers.FeatureUsage, Enum.Format(typeof(FeatureFlag), featureFlag, "x"));
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Microsoft.Graph
         /// <param name="featureFlag">The Feature usage flag to check for.</param>
         internal static bool ContainsFeatureFlag(this HttpClient httpClient, FeatureFlag featureFlag)
         {
-            if (httpClient.DefaultRequestHeaders.TryGetValues(CoreConstants.Headers.FeatureFlag, out var flags))
+            if (httpClient.DefaultRequestHeaders.TryGetValues(CoreConstants.Headers.FeatureUsage, out var flags))
             {
                 string flag = flags.FirstOrDefault();
                 if (Enum.TryParse(Convert.ToInt32(flag, 16).ToString(), out FeatureFlag targetFeatureFlag))

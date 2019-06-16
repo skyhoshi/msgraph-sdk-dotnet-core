@@ -78,8 +78,8 @@ namespace Microsoft.Graph
                 var newRequest = await httpResponseMessage.RequestMessage.CloneAsync();
 
                 // Authenticate request using AuthenticationProvider
-
                 await authProvider.AuthenticateRequestAsync(newRequest);
+
                 httpResponseMessage = await base.SendAsync(newRequest, cancellationToken);
 
                 retryAttempt++;
@@ -90,7 +90,6 @@ namespace Microsoft.Graph
                     return httpResponseMessage;
                 }
             }
-
             return httpResponseMessage;
         }
 
@@ -112,6 +111,8 @@ namespace Microsoft.Graph
             if (authProvider != null)
             {
                 await authProvider.AuthenticateRequestAsync(httpRequestMessage);
+                // TODO: Test if it's available during a retry.
+                httpRequestMessage.SetFeatureFlag(FeatureFlag.AuthHandler);
 
                 HttpResponseMessage response = await base.SendAsync(httpRequestMessage, cancellationToken);
 

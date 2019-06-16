@@ -19,7 +19,7 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
     public class GraphClientFactoryTests : IDisposable
     {
         private MockRedirectHandler testHttpMessageHandler;
-        private DelegatingHandler[] handlers;
+        private IList<DelegatingHandler> handlers;
         private const string expectedAccessToken = "graph-client-factory-infused-token";
         private MockAuthenticationProvider testAuthenticationProvider;
 
@@ -27,7 +27,7 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
         {
             this.testHttpMessageHandler = new MockRedirectHandler();
             testAuthenticationProvider = new MockAuthenticationProvider(expectedAccessToken);
-            handlers = GraphClientFactory.CreateDefaultHandlers(testAuthenticationProvider.Object).ToArray();
+            handlers = GraphClientFactory.CreateDefaultHandlers(testAuthenticationProvider.Object);
         }
 
         public void Dispose()
@@ -43,21 +43,25 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
         [Fact]
         public void CreatePipelineWithoutHttpMessageHandlerInput()
         {
-            using (AuthenticationHandler authenticationHandler = (AuthenticationHandler)GraphClientFactory.CreatePipeline(handlers))
+            using (AuthenticationHandler authenticationHandler = (AuthenticationHandler)GraphClientFactory.CreatePipeline(handlers, FeatureFlag.DefaultHttpProvider))
             using (CompressionHandler compressionHandler = (CompressionHandler)authenticationHandler.InnerHandler)
             using (RetryHandler retryHandler = (RetryHandler)compressionHandler.InnerHandler)
             using (RedirectHandler redirectHandler = (RedirectHandler)retryHandler.InnerHandler)
-            using (HttpMessageHandler innerMost = redirectHandler.InnerHandler)
+            using (TelemetryHandler telemetryHandler = (TelemetryHandler)redirectHandler.InnerHandler)
+            using (HttpMessageHandler innerMost = telemetryHandler.InnerHandler)
             {
                 Assert.NotNull(authenticationHandler);
                 Assert.NotNull(compressionHandler);
                 Assert.NotNull(retryHandler);
                 Assert.NotNull(redirectHandler);
+                Assert.NotNull(telemetryHandler);
                 Assert.NotNull(innerMost);
+                Assert.Equal(FeatureFlag.DefaultHttpProvider, telemetryHandler.DefaultFeatureFlag);
                 Assert.IsType<AuthenticationHandler>(authenticationHandler);
                 Assert.IsType<CompressionHandler>(compressionHandler);
                 Assert.IsType<RetryHandler>(retryHandler);
                 Assert.IsType<RedirectHandler>(redirectHandler);
+                Assert.IsType<TelemetryHandler>(telemetryHandler);
                 Assert.True(innerMost is HttpMessageHandler);
             }
         }
@@ -69,17 +73,20 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
             using (CompressionHandler compressionHandler = (CompressionHandler)authenticationHandler.InnerHandler)
             using (RetryHandler retryHandler = (RetryHandler)compressionHandler.InnerHandler)
             using (RedirectHandler redirectHandler = (RedirectHandler)retryHandler.InnerHandler)
-            using (MockRedirectHandler innerMost = (MockRedirectHandler)redirectHandler.InnerHandler)
+            using (TelemetryHandler telemetryHandler = (TelemetryHandler)redirectHandler.InnerHandler)
+            using (MockRedirectHandler innerMost = (MockRedirectHandler)telemetryHandler.InnerHandler)
             {
                 Assert.NotNull(authenticationHandler);
                 Assert.NotNull(compressionHandler);
                 Assert.NotNull(retryHandler);
                 Assert.NotNull(redirectHandler);
+                Assert.NotNull(telemetryHandler);
                 Assert.NotNull(innerMost);
                 Assert.IsType<AuthenticationHandler>(authenticationHandler);
                 Assert.IsType<CompressionHandler>(compressionHandler);
                 Assert.IsType<RetryHandler>(retryHandler);
                 Assert.IsType<RedirectHandler>(redirectHandler);
+                Assert.IsType<TelemetryHandler>(telemetryHandler);
                 Assert.IsType<MockRedirectHandler>(innerMost);
             }
         }
@@ -159,7 +166,7 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
                 Version assemblyVersion = typeof(GraphClientFactory).GetTypeInfo().Assembly.GetName().Version;
                 string value = string.Format(
                     CoreConstants.Headers.SdkVersionHeaderValueFormatString,
-                    "Graph",
+                    "graph",
                     assemblyVersion.Major,
                     assemblyVersion.Minor,
                     assemblyVersion.Build);
@@ -293,29 +300,29 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
 
         }
 
-        [Fact]
-        public void CreatePipelineWithFeatureFlags_Should_Set_FeatureFlag_For_Default_Handlers()
-        {
-            FeatureFlag expectedFlag = FeatureFlag.AuthHandler | FeatureFlag.CompressionHandler | FeatureFlag.RetryHandler | FeatureFlag.RedirectHandler;
-            string expectedFlagHeaderValue = Enum.Format(typeof(FeatureFlag), expectedFlag, "x");
-            var handlers = GraphClientFactory.CreateDefaultHandlers(null);
-            var pipelineWithHandlers = GraphClientFactory.CreatePipelineWithFeatureFlags(handlers);
+        //[Fact]
+        //public void CreatePipelineWithFeatureFlags_Should_Set_FeatureFlag_For_Default_Handlers()
+        //{
+        //    FeatureFlag expectedFlag = FeatureFlag.AuthHandler | FeatureFlag.CompressionHandler | FeatureFlag.RetryHandler | FeatureFlag.RedirectHandler;
+        //    string expectedFlagHeaderValue = Enum.Format(typeof(FeatureFlag), expectedFlag, "x");
+        //    var handlers = GraphClientFactory.CreateDefaultHandlers(null);
+        //    var pipelineWithHandlers = GraphClientFactory.CreatePipelineWithFeatureFlags(handlers);
 
-            Assert.NotNull(pipelineWithHandlers.Pipeline);
-            Assert.True(pipelineWithHandlers.FeatureFlags.HasFlag(expectedFlag));
-        }
+        //    Assert.NotNull(pipelineWithHandlers.Pipeline);
+        //    Assert.True(pipelineWithHandlers.FeatureFlags.HasFlag(expectedFlag));
+        //}
 
-        [Fact]
-        public void CreatePipelineWithFeatureFlags_Should_Set_FeatureFlag_For_Speficied_Handlers()
-        {
-            FeatureFlag expectedFlag = FeatureFlag.AuthHandler | FeatureFlag.CompressionHandler | FeatureFlag.RetryHandler;
-            var handlers = GraphClientFactory.CreateDefaultHandlers(null);
-            handlers.RemoveAt(3);
-            var pipelineWithHandlers = GraphClientFactory.CreatePipelineWithFeatureFlags(handlers);
+        //[Fact]
+        //public void CreatePipelineWithFeatureFlags_Should_Set_FeatureFlag_For_Speficied_Handlers()
+        //{
+        //    FeatureFlag expectedFlag = FeatureFlag.AuthHandler | FeatureFlag.CompressionHandler | FeatureFlag.RetryHandler;
+        //    var handlers = GraphClientFactory.CreateDefaultHandlers(null);
+        //    handlers.RemoveAt(3);
+        //    var pipelineWithHandlers = GraphClientFactory.CreatePipelineWithFeatureFlags(handlers);
 
-            Assert.NotNull(pipelineWithHandlers.Pipeline);
-            Assert.True(pipelineWithHandlers.FeatureFlags.HasFlag(expectedFlag));
-        }
+        //    Assert.NotNull(pipelineWithHandlers.Pipeline);
+        //    Assert.True(pipelineWithHandlers.FeatureFlags.HasFlag(expectedFlag));
+        //}
 
         [Fact]
         public void RemoveHandler_Should_Remove_Handler_From_List()

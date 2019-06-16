@@ -49,16 +49,17 @@ namespace Microsoft.Graph
         /// <summary>
         /// Send a HTTP request 
         /// </summary>
-        /// <param name="httpRequest">The HTTP request<see cref="HttpRequestMessage"/>needs to be sent.</param>
+        /// <param name="httpRequestMessage">The HTTP request<see cref="HttpRequestMessage"/>needs to be sent.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns></returns>
-        protected async override Task<HttpResponseMessage> SendAsync(HttpRequestMessage httpRequest, CancellationToken cancellationToken)
+        protected async override Task<HttpResponseMessage> SendAsync(HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken)
         {
-            RetryOption = httpRequest.GetMiddlewareOption<RetryHandlerOption>() ?? RetryOption;
+            RetryOption = httpRequestMessage.GetMiddlewareOption<RetryHandlerOption>() ?? RetryOption;
+            httpRequestMessage.SetFeatureFlag(FeatureFlag.RetryHandler);
 
-            var response = await base.SendAsync(httpRequest, cancellationToken);
+            var response = await base.SendAsync(httpRequestMessage, cancellationToken);
 
-            if(ShouldRetry(response) && httpRequest.IsBuffered() && RetryOption.MaxRetry > 0 && RetryOption.ShouldRetry(RetryOption.Delay, 0, response))
+            if(ShouldRetry(response) && httpRequestMessage.IsBuffered() && RetryOption.MaxRetry > 0 && RetryOption.ShouldRetry(RetryOption.Delay, 0, response))
             {
                 response = await SendRetryAsync(response, cancellationToken);
             }
@@ -110,7 +111,6 @@ namespace Microsoft.Graph
                              Code = ErrorConstants.Codes.TooManyRetries,
                              Message = string.Format(ErrorConstants.Messages.TooManyRetriesFormatString, retryCount)
                          });
-
         }
 
         /// <summary>

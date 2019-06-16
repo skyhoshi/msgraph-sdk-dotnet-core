@@ -18,9 +18,9 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Extensions
 
             string expectedHeaderValue = Enum.Format(typeof(FeatureFlag), FeatureFlag.LongRunningOperationHandler, "x");
 
-            Assert.True(client.DefaultRequestHeaders.Contains(CoreConstants.Headers.FeatureFlag));
-            Assert.True(client.DefaultRequestHeaders.GetValues(CoreConstants.Headers.FeatureFlag).Count().Equals(1));
-            Assert.Equal(client.DefaultRequestHeaders.GetValues(CoreConstants.Headers.FeatureFlag).First(), expectedHeaderValue);
+            Assert.True(client.DefaultRequestHeaders.Contains(CoreConstants.Headers.FeatureUsage));
+            Assert.True(client.DefaultRequestHeaders.GetValues(CoreConstants.Headers.FeatureUsage).Count().Equals(1));
+            Assert.Equal(client.DefaultRequestHeaders.GetValues(CoreConstants.Headers.FeatureUsage).First(), expectedHeaderValue);
         }
 
         [Fact]
@@ -29,15 +29,15 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Extensions
             FeatureFlag flags = FeatureFlag.AuthHandler | FeatureFlag.CompressionHandler | FeatureFlag.RetryHandler | FeatureFlag.RedirectHandler;
 
             HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Add(CoreConstants.Headers.FeatureFlag, Enum.Format(typeof(FeatureFlag), FeatureFlag.DefaultHttpProvider, "x"));
+            client.DefaultRequestHeaders.Add(CoreConstants.Headers.FeatureUsage, Enum.Format(typeof(FeatureFlag), FeatureFlag.DefaultHttpProvider, "x"));
             client.SetFeatureFlag(flags);
 
             // 0000004F
             string expectedHeaderValue = Enum.Format(typeof(FeatureFlag), flags |= FeatureFlag.DefaultHttpProvider, "x");
 
-            Assert.True(client.DefaultRequestHeaders.Contains(CoreConstants.Headers.FeatureFlag));
-            Assert.True(client.DefaultRequestHeaders.GetValues(CoreConstants.Headers.FeatureFlag).Count().Equals(1));
-            Assert.Equal(client.DefaultRequestHeaders.GetValues(CoreConstants.Headers.FeatureFlag).First(), expectedHeaderValue);
+            Assert.True(client.DefaultRequestHeaders.Contains(CoreConstants.Headers.FeatureUsage));
+            Assert.True(client.DefaultRequestHeaders.GetValues(CoreConstants.Headers.FeatureUsage).Count().Equals(1));
+            Assert.Equal(client.DefaultRequestHeaders.GetValues(CoreConstants.Headers.FeatureUsage).First(), expectedHeaderValue);
         }
     }
 }

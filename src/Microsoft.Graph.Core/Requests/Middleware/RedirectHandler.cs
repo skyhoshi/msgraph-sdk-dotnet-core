@@ -43,15 +43,16 @@ namespace Microsoft.Graph
         /// <summary>
         /// Sends the Request 
         /// </summary>
-        /// <param name="request">The <see cref="HttpRequestMessage"/> to send.</param>
+        /// <param name="httpRequestMessage">The <see cref="HttpRequestMessage"/> to send.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/>for the request.</param>
         /// <returns>The <see cref="HttpResponseMessage"/>.</returns>
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken)
         {
-            RedirectOption = request.GetMiddlewareOption<RedirectHandlerOption>() ?? RedirectOption;
+            RedirectOption = httpRequestMessage.GetMiddlewareOption<RedirectHandlerOption>() ?? RedirectOption;
+            httpRequestMessage.SetFeatureFlag(FeatureFlag.RedirectHandler);
 
             // send request first time to get response
-            var response = await base.SendAsync(request, cancellationToken);
+            var response = await base.SendAsync(httpRequestMessage, cancellationToken);
 
             // check response status code and redirect handler option
             if (IsRedirect(response.StatusCode) && RedirectOption.ShouldRedirect(response) && RedirectOption.MaxRedirect > 0)
@@ -90,8 +91,8 @@ namespace Microsoft.Graph
                     newRequest.RequestUri = response.Headers.Location;
 
                     // Remove Auth if http request's scheme or host changes
-                    if (String.CompareOrdinal(newRequest.RequestUri.Host, request.RequestUri.Host) != 0 ||
-                        String.CompareOrdinal(newRequest.RequestUri.Scheme, request.RequestUri.Scheme) != 0)
+                    if (String.CompareOrdinal(newRequest.RequestUri.Host, httpRequestMessage.RequestUri.Host) != 0 ||
+                        String.CompareOrdinal(newRequest.RequestUri.Scheme, httpRequestMessage.RequestUri.Scheme) != 0)
                     {
                         newRequest.Headers.Authorization = null;
                     }
