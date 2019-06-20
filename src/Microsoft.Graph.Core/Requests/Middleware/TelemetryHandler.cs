@@ -5,6 +5,7 @@
 namespace Microsoft.Graph
 {
     using System;
+    using System.Diagnostics;
     using System.Linq;
     using System.Net.Http;
     using System.Reflection;
@@ -53,41 +54,43 @@ namespace Microsoft.Graph
                 httpRequestMessage.Headers.TryAddWithoutValidation(CoreConstants.Headers.ClientRequestId, requestContext.ClientRequestId);
             }
 
-            // Prepend feature usage if one is set.
+            // Append feature flag to SDK version if one exists.
             if (!requestContext.FeatureUsage.Equals(FeatureFlag.None))
             {
                 string featureUsage = Enum.Format(typeof(FeatureFlag), requestContext.FeatureUsage, "x");
                 sdkVersionHeaderValue = $"{sdkVersionHeaderValue} ({CoreConstants.Headers.FeatureUsage}={featureUsage})";
             }
 
+            var found = httpRequestMessage.Headers.TryGetValues(CoreConstants.Headers.SdkVersionHeaderName, out var findee);
+            var contains = findee?.Contains(sdkVersionHeaderValue);
+
             // Add sdk version header without duplicates.
-            if (!(httpRequestMessage.Headers.TryGetValues(CoreConstants.Headers.SdkVersionHeaderName, out var existingSdkHeader) && !existingSdkHeader.Contains(sdkVersionHeaderValue)))
+            if (!(httpRequestMessage.Headers.TryGetValues(CoreConstants.Headers.SdkVersionHeaderName, out var existingSdkHeader) && existingSdkHeader.Contains(sdkVersionHeaderValue)))
             {
                 httpRequestMessage.Headers.TryAddWithoutValidation(CoreConstants.Headers.SdkVersionHeaderName, sdkVersionHeaderValue);
             }
 
-            // Add OS + Framework stats.
-#if NET45
+            if (!httpRequestMessage.Headers.Contains("HostOS"))
+            {
+                httpRequestMessage.Headers.TryAddWithoutValidation("HostOS", System.Runtime.InteropServices.RuntimeInformation.OSDescription);
+            }
 
-            if (httpRequestMessage.Headers.Contains("x-client-OS"))
+            if (!httpRequestMessage.Headers.Contains("RuntimeEnvironment"))
             {
-                httpRequestMessage.Headers.TryAddWithoutValidation("x-client-OS", Environment.OSVersion.ToString());
-            }
-            if (httpRequestMessage.Headers.Contains("x-framework-Name"))
-            {
-                httpRequestMessage.Headers.TryAddWithoutValidation("x-framework-Name", Assembly.GetEntryAssembly()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName);
-            }
+                string runtimeFramrwork = string.Empty;
+#if NETSTANDARD1_1
+                runtimeFramrwork = TargetAssembly.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName;
 #else
-            if (httpRequestMessage.Headers.Contains("x-client-OS"))
-            {
-                httpRequestMessage.Headers.TryAddWithoutValidation("x-client-OS", System.Runtime.InteropServices.RuntimeInformation.OSDescription);
-            }
-
-            if (httpRequestMessage.Headers.Contains("x-framework-Name"))
-            {
-                httpRequestMessage.Headers.TryAddWithoutValidation("x-framework-Name", TargetAssembly.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName);
-            }
+                runtimeFramrwork = (Assembly.GetEntryAssembly() ?? TargetAssembly).GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName;
 #endif
+                // Format runtimeFramework from .NETStandard,Version=v1.1 to .NETStandard/1.1.
+                int targetIndex = runtimeFramrwork.IndexOf(",");
+                if (targetIndex != -1)
+                {
+                    // Substitute ",Version=v" with "/".
+                    httpRequestMessage.Headers.TryAddWithoutValidation("RuntimeEnvironment", $"{runtimeFramrwork.Substring(0, targetIndex)}/{runtimeFramrwork.Substring(targetIndex + 10)}");
+                }
+            }
             return base.SendAsync(httpRequestMessage, cancellationToken);
         }
     }
