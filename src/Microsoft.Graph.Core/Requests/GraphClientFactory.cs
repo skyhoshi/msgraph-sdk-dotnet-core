@@ -10,7 +10,6 @@ namespace Microsoft.Graph
     using System.Net.Http;
     using System.Reflection;
     using System.Net.Http.Headers;
-    using System.Collections;
 
     /// <summary>
     /// GraphClientFactory class to create the HTTP client
@@ -106,6 +105,7 @@ namespace Microsoft.Graph
         /// <see cref="HttpResponseMessage"/> travels from the network back to <see cref="HttpClient"/>.
         /// The handlers are invoked in a top-down fashion. That is, the first entry is invoked first for
         /// an outbound request message but last for an inbound response message.</param>
+        /// <param name="callerFeatureFlag">The feature flag to identify the where the HttpClient is created.</param>
         /// <param name="proxy">The proxy to be used with created client.</param>
         /// <param name="finalHandler">The last HttpMessageHandler to HTTP calls.</param>
         /// <returns>An <see cref="HttpClient"/> instance with the configured handlers.</returns>
@@ -180,6 +180,7 @@ namespace Microsoft.Graph
         /// of sending an <see cref="HttpRequestMessage"/> and receiving an <see cref="HttpResponseMessage"/>.
         /// The handlers are invoked in a top-down fashion. That is, the first entry is invoked first for
         /// an outbound request message but last for an inbound response message.</param>
+        /// <param name="callerFeatureFlag">The feature flag to identify the where the HttpClient is created.</param>
         /// <returns>A tuple with The HTTP message channel and FeatureFlag for the handlers.</returns>
         internal static HttpMessageHandler CreatePipeline(IEnumerable<DelegatingHandler> handlers, FeatureFlag callerFeatureFlag, HttpMessageHandler finalHandler = null)
         {
@@ -202,6 +203,7 @@ namespace Microsoft.Graph
 #endif
             HttpMessageHandler httpPipeline = finalHandler;
             IList<DelegatingHandler> reversedHandlers = handlers.Reverse().ToList();
+            // Ensures Telemetry handler is always registered as the last handler.
             reversedHandlers.Insert(0, new TelemetryHandler(callerFeatureFlag));
             HashSet<Type> existingHandlerTypes = new HashSet<Type>();
             foreach (DelegatingHandler handler in reversedHandlers)
