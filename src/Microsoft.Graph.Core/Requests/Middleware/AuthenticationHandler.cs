@@ -8,6 +8,12 @@ namespace Microsoft.Graph
     using System.Threading;
     using System.Threading.Tasks;
     using System.Net;
+    using System;
+    using System.Diagnostics;
+    using OpenCensus;
+    using OpenCensus.Trace;
+
+
     /// <summary>
     /// A <see cref="DelegatingHandler"/> implementation using standard .NET libraries.
     /// </summary>
@@ -18,6 +24,11 @@ namespace Microsoft.Graph
         /// </summary>
         private int MaxRetry { get; set; } = 1;
 
+     
+       public ITracer Trace { get; set; } 
+
+
+       
         /// <summary>
         /// AuthOption property
         /// </summary>
@@ -37,6 +48,7 @@ namespace Microsoft.Graph
         {
             AuthenticationProvider = authenticationProvider;
             AuthOption = authOption ?? new AuthenticationHandlerOption();
+            
         }
 
         /// <summary>
@@ -51,6 +63,14 @@ namespace Microsoft.Graph
             InnerHandler = innerHandler;
             AuthenticationProvider = authenticationProvider;
         }
+
+
+        public AuthenticationHandler(IAuthenticationProvider authenticationProvider, ITracer tracer)
+        {
+            AuthenticationProvider = authenticationProvider;
+            Trace = tracer;
+        }
+
 
         /// <summary>
         /// Checks HTTP response message status code if it's unauthorized (401) or not
@@ -106,14 +126,36 @@ namespace Microsoft.Graph
             AuthOption = httpRequestMessage.GetMiddlewareOption<AuthenticationHandlerOption>() ?? AuthOption;
 
             // If default auth provider is not set, use the option
-            var authProvider = AuthOption.AuthenticationProvider ?? AuthenticationProvider;
+            var authProvider = AuthOption?.AuthenticationProvider ?? AuthenticationProvider;
 
             // Authenticate request using AuthenticationProvider
             if (authProvider != null)
             {
-                await authProvider.AuthenticateRequestAsync(httpRequestMessage);
+                //call to active directory to get an access token
+                //Average time: 200ms
 
-                HttpResponseMessage response = await base.SendAsync(httpRequestMessage, cancellationToken);
+                var span1 = Trace.SpanBuilder("Trace auth request").StartSpan();
+                await authProvider.AuthenticateRequestAsync(httpRequestMessage);
+                span1.End();
+      
+                
+
+
+
+                //call to graph service
+                //Average time: 200ms
+                HttpResponseMessage response = null;
+                var span2 = Trace.SpanBuilder("Trace call to grpah service").StartSpan();
+                try
+                { 
+                    response = await base.SendAsync(httpRequestMessage, cancellationToken);
+                    span2.End();
+                }
+
+                catch(Exception ex)
+                {
+                    span2.Status = Status.Internal.WithDescription(ex.ToString());
+                }
 
                 // Chcek if response is a 401 & is not a streamed body (is buffered)
                 if (IsUnauthorized(response) && httpRequestMessage.IsBuffered())
@@ -131,5 +173,7 @@ namespace Microsoft.Graph
                 return await base.SendAsync(httpRequestMessage, cancellationToken);
             }
         }
+
+
     }
 }

@@ -32,6 +32,7 @@ namespace Microsoft.Graph
         /// </summary>
         public AuthenticateRequestAsyncDelegate AuthenticateRequestAsyncDelegate { get; set; }
 
+     
         /// <summary>
         /// Authenticates the specified request message.
         /// </summary>

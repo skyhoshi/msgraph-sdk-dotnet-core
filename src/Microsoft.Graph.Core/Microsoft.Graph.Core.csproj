@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Microsoft Graph Core Client Library implements core functionality used by Microsoft Graph client libraries.</Description>
-    <Copyright>&#169; Microsoft Corporation. All rights reserved.</Copyright>
+    <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
     <AssemblyTitle>Microsoft Graph Core Client Library</AssemblyTitle>
     <Authors>Microsoft</Authors>
-    <TargetFrameworks>netstandard1.1;net45;Xamarin.iOS10;MonoAndroid70</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net45;Xamarin.iOS10;MonoAndroid70</TargetFrameworks>
     <PreserveCompilationContext>false</PreserveCompilationContext>
     <AssemblyName>Microsoft.Graph.Core</AssemblyName>
     <PackageId>Microsoft.Graph.Core</PackageId>
@@ -13,7 +13,7 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <RepositoryUrl>https://github.com/microsoftgraph/msgraph-sdk-dotnet</RepositoryUrl>
-    <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.1' ">1.6.0</NetStandardImplicitPackageVersion>
+    <!--<NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.1' ">1.6.1</NetStandardImplicitPackageVersion>-->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <SignAssembly>false</SignAssembly>
     <DelaySign>false</DelaySign>
@@ -64,10 +64,13 @@
     <PackageReference Include="Newtonsoft.Json" Version="6.0.1" />
 	<PackageReference Include="System.ValueTuple" Version="4.3.0" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.1' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="System.Net.Http" Version="4.3.3" />
 	<PackageReference Include="System.ValueTuple" Version="4.3.0" />
+    <PackageReference Include="OpenCensus">
+      <Version>0.1.0-alpha-42253</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'Xamarin.iOS10' ">
 	<Reference Include="Xamarin.iOS" />
@@ -93,5 +96,32 @@
 	  <Pack>True</Pack>
 	  <PackagePath></PackagePath>
 	</None>
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'Xamarin.iOS10'">
+    <PackageReference Include="OpenCensus">
+      <Version>0.1.0-alpha-42253</Version>
+    </PackageReference>
+    <PackageReference Include="OpenCensus.Abstractions">
+      <Version>0.1.0-alpha-42253</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'MonoAndroid70'">
+    <PackageReference Include="OpenCensus">
+      <Version>0.1.0-alpha-42253</Version>
+    </PackageReference>
+    <PackageReference Include="OpenCensus.Abstractions">
+      <Version>0.1.0-alpha-42253</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
+    <PackageReference Include="OpenCensus.Abstractions">
+      <Version>0.1.0-alpha-42253</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Tasks\" />
   </ItemGroup>
 </Project>

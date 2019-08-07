@@ -12,6 +12,7 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
     using Xunit;
     using System.Threading.Tasks;
     using System.Collections.Generic;
+    using System.Diagnostics;
 
     public class AuthenticationHandlerTests : IDisposable
     {
@@ -20,8 +21,10 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
         private MockAuthenticationProvider mockAuthenticationProvider;
         private HttpMessageInvoker invoker;
 
+
         public AuthenticationHandlerTests()
         {
+
             testHttpMessageHandler = new MockRedirectHandler();
             mockAuthenticationProvider = new MockAuthenticationProvider();
             authenticationHandler = new AuthenticationHandler(mockAuthenticationProvider.Object, testHttpMessageHandler);
@@ -34,7 +37,7 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
             authenticationHandler.Dispose();
             testHttpMessageHandler.Dispose();
         }
-
+        
         [Fact]
         public void AuthHandler_AuthProviderConstructor()
         {
@@ -46,6 +49,9 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
                 Assert.IsType<AuthenticationHandler>(auth);
             }
         }
+        
+        
+             
 
         [Fact]
         public void AuthHandler_AuthProviderHttpMessageHandlerConstructor()
@@ -89,6 +95,8 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
             Assert.Same(response, expectedResponse);
             Assert.Same(response.RequestMessage, httpRequestMessage);
         }
+
+
 
         [Fact]
         public async Task AuthHandler_ShouldRetryUnauthorizedGetRequest()
@@ -270,3 +278,4 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Requests
         }
     }
 }
+

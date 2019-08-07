@@ -22,6 +22,16 @@ namespace Microsoft.Graph
     {
         private ResponseHandler responseHandler;
 
+        // PublicClientApplication clientApp = Build();
+
+        // IAuthenticationProvider authProvider = new DeviceCodeProvider(clientApp);
+
+        // var graphClient = new GraphServiceClient(authProvider);
+
+        // var user = await graphClient.Me.Request().GetAsync();
+
+        // var user = await graphClient.Me.Request().GetAsync();
+
         /// <summary>
         /// Constructs a new <see cref="BaseRequest"/>.
         /// </summary>
@@ -254,8 +264,9 @@ namespace Microsoft.Graph
                         request.Content.Headers.ContentType = new MediaTypeHeaderValue(this.ContentType);
                     }
                 }
-
+                // start
                 return await this.Client.HttpProvider.SendAsync(request, completionOption, cancellationToken).ConfigureAwait(false);
+                // stop
             }
         }
 

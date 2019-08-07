@@ -42,5 +42,7 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Authentication
                 Assert.Null(httpRequestMessage.Headers.Authorization);
             }
         }
+
+    
     }
 }
