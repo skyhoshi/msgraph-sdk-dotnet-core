@@ -25,6 +25,14 @@ namespace Microsoft.Graph
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        public ResponseHandler() : this(new Serializer())
+        {
+
+        }
+
+        /// <summary>
         /// Process raw HTTP response into requested domain type.
         /// </summary>
         /// <typeparam name="T">The type to return</typeparam>
