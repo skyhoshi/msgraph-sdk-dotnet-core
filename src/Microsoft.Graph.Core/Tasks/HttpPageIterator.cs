@@ -66,7 +66,8 @@ namespace Microsoft.Graph.Core.Tasks
         private async Task<bool> InterpageIterateAsync(CancellationToken cancellationToken)
         {
             HttpResponseMessage hrm = await _client.SendAsync(_request);
-            //var stream = await hrm.Content.ReadAsStreamAsync();
+            
+            // TODO: Handle both server and client errors. Pass through service errors.
 
             var responseHander = new ResponseHandler();
 
