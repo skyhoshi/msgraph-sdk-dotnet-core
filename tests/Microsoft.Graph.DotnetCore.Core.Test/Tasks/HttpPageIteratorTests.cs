@@ -24,7 +24,7 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Tasks
             var authProvider = new DelegateAuthenticationProvider(
                             async (requestMessage) =>
                             {
-                                var token = "eyJ0eXAiOiJKV1QiLCJub25jZSI6ImQ2bm1iamtxWlpLZlFfQjEwWVJJZ0gyWGJ5amZoZTkxMGxNc05aYWdQXzAiLCJhbGciOiJSUzI1NiIsIng1dCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkduNCIsImtpZCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkduNCJ9.eyJhdWQiOiIwMDAwMDAwMy0wMDAwLTAwMDAtYzAwMC0wMDAwMDAwMDAwMDAiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9lZTk5MWQ4OC0wZWJlLTQ2OWMtOWMzMS00NmFkNTgwMmQxMzAvIiwiaWF0IjoxNTY5MDE4NTU5LCJuYmYiOjE1NjkwMTg1NTksImV4cCI6MTU2OTAyMjQ1OSwiYWNjdCI6MCwiYWNyIjoiMSIsImFpbyI6IkFTUUEyLzhNQUFBQXZES2NFSTFGcUVBUkFkLzRWT0NhcDMzNFVVWnBxZlloblFLd1dQcnlnbjA9IiwiYW1yIjpbInB3ZCJdLCJhcHBfZGlzcGxheW5hbWUiOiJHcmFwaCBleHBsb3JlciIsImFwcGlkIjoiZGU4YmM4YjUtZDlmOS00OGIxLWE4YWQtYjc0OGRhNzI1MDY0IiwiYXBwaWRhY3IiOiIwIiwiZmFtaWx5X25hbWUiOiJWYW5jZSIsImdpdmVuX25hbWUiOiJBZGVsZSIsImlwYWRkciI6IjEzMS4xMDcuMTc0LjE3NiIsIm5hbWUiOiJVcGRhdGVkIEFkZWxlIFZhbmNlIiwib2lkIjoiNjBlYTY1ZDQtY2ExMy00OTNkLThkYjgtOTRjZTE2NGNiNTVhIiwicGxhdGYiOiIzIiwicHVpZCI6IjEwMDMzRkZGQTUwMTkyMjUiLCJyaCI6IkkiLCJzY3AiOiJDYWxlbmRhcnMuUmVhZFdyaXRlIENvbnRhY3RzLlJlYWRXcml0ZSBGaWxlcy5SZWFkV3JpdGUuQWxsIEdyb3VwLlJlYWQuQWxsIE1haWwuUmVhZFdyaXRlIE5vdGVzLlJlYWRXcml0ZS5BbGwgb3BlbmlkIFBlb3BsZS5SZWFkIHByb2ZpbGUgU2l0ZXMuUmVhZFdyaXRlLkFsbCBUYXNrcy5SZWFkV3JpdGUgVXNlci5SZWFkQmFzaWMuQWxsIFVzZXIuUmVhZFdyaXRlIFVzZXIuUmVhZFdyaXRlLkFsbCBlbWFpbCIsInN1YiI6Inp3ZkpLajRCTHdYLXBqLUhzZFRqWDQ5RDU2S05vNDlsSTVramQxQll1eTQiLCJ0aWQiOiJlZTk5MWQ4OC0wZWJlLTQ2OWMtOWMzMS00NmFkNTgwMmQxMzAiLCJ1bmlxdWVfbmFtZSI6IkFkZWxlVkBNMzY1eDQ2Mjg5Ni5vbm1pY3Jvc29mdC5jb20iLCJ1cG4iOiJBZGVsZVZATTM2NXg0NjI4OTYub25taWNyb3NvZnQuY29tIiwidXRpIjoiVEpnakRuLTdhRXVrSnRyTFVlMERBQSIsInZlciI6IjEuMCIsIndpZHMiOlsiNjJlOTAzOTQtNjlmNS00MjM3LTkxOTAtMDEyMTc3MTQ1ZTEwIl0sInhtc19zdCI6eyJzdWIiOiJ6V3ltQk1XbVczNElRX0czNjJ1SGVZVHM5UHVTZ2pEd1p4MFVESXhxeVdzIn0sInhtc190Y2R0IjoxNTA2MDk3OTYxfQ.DYhZJ5OhacXThSBkoC4Ifuxga6tW6-EDNkmeWOURmq6QFLmsqZYPlG4QFej-UzoXpd8xID7kLg53b_N_lVld3MO6WurmADDcMSwxUKrDTcMI_TXkuOmL3wJgU9K3T_KqZVN4HGhnR_iLcBtQUnHTHiSlJ59hIVyv6lvF8WUfy0jV4NVGi_jWhOKTiwyRNTP0NzSTENks-TgsKRkwaNvyfBCa1vC6jA2VYKZPFJyNepXncLqG61-96Iy6OtCJAslCxMQ9voCCo6yMtYMbebkrvkXE0M6cXi54gWFljYOAt0EbFaYLAypfinjKDrE4gm8F630Mq-qfbo_uHHGrtB4lxA";
+                                var token = "eyJ0eXAiOiJKV1QiLCJub25jZSI6IkxXS1lWRmlvVHVyWHdHeWIwd3QzQTVoRHVNb1FWZVMxRnJxd3UxaGlCVlUiLCJhbGciOiJSUzI1NiIsIng1dCI6ImFQY3R3X29kdlJPb0VOZzNWb09sSWgydGlFcyIsImtpZCI6ImFQY3R3X29kdlJPb0VOZzNWb09sSWgydGlFcyJ9.eyJhdWQiOiIwMDAwMDAwMy0wMDAwLTAwMDAtYzAwMC0wMDAwMDAwMDAwMDAiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNTY5MzY1Mjg5LCJuYmYiOjE1NjkzNjUyODksImV4cCI6MTU2OTM2OTE4OSwiYWNjdCI6MCwiYWNyIjoiMSIsImFpbyI6IkFVUUF1LzhNQUFBQWFSTlhzbWQreUR2ZERtMkg0TVBxWjdXSFhRSW9keE1oZHcyNWFSY2VwNitiL3JXbUl1SjJENWMyUHIrd2trMXFOUjRiM3JqVUpUMFlUUGUvQ08rUGZRPT0iLCJhbXIiOlsibWZhIl0sImFwcF9kaXNwbGF5bmFtZSI6IkdyYXBoIGV4cGxvcmVyIiwiYXBwaWQiOiJkZThiYzhiNS1kOWY5LTQ4YjEtYThhZC1iNzQ4ZGE3MjUwNjQiLCJhcHBpZGFjciI6IjAiLCJmYW1pbHlfbmFtZSI6Ik1haW5lciIsImdpdmVuX25hbWUiOiJNaWNoYWVsIiwiaXBhZGRyIjoiMTMxLjEwNy4xNzQuMTc2IiwibmFtZSI6Ik1pY2hhZWwgTWFpbmVyIiwib2lkIjoiZDA5ZDBlZGItOTRjNC00OTQ4LWE5ZTQtNWRkOTIzNzc3ZDRiIiwib25wcmVtX3NpZCI6IlMtMS01LTIxLTIxMjc1MjExODQtMTYwNDAxMjkyMC0xODg3OTI3NTI3LTIyNzY0NDUiLCJwbGF0ZiI6IjMiLCJwdWlkIjoiMTAwM0JGRkQ4MDI4NDU0RCIsInJoIjoiSSIsInNjcCI6IkNhbGVuZGFycy5SZWFkV3JpdGUgQ29udGFjdHMuUmVhZFdyaXRlIERldmljZU1hbmFnZW1lbnRBcHBzLlJlYWQuQWxsIERldmljZU1hbmFnZW1lbnRBcHBzLlJlYWRXcml0ZS5BbGwgRGV2aWNlTWFuYWdlbWVudENvbmZpZ3VyYXRpb24uUmVhZC5BbGwgRGV2aWNlTWFuYWdlbWVudENvbmZpZ3VyYXRpb24uUmVhZFdyaXRlLkFsbCBEZXZpY2VNYW5hZ2VtZW50TWFuYWdlZERldmljZXMuUHJpdmlsZWdlZE9wZXJhdGlvbnMuQWxsIERldmljZU1hbmFnZW1lbnRNYW5hZ2VkRGV2aWNlcy5SZWFkLkFsbCBEZXZpY2VNYW5hZ2VtZW50TWFuYWdlZERldmljZXMuUmVhZFdyaXRlLkFsbCBEZXZpY2VNYW5hZ2VtZW50UkJBQy5SZWFkLkFsbCBEZXZpY2VNYW5hZ2VtZW50UkJBQy5SZWFkV3JpdGUuQWxsIERldmljZU1hbmFnZW1lbnRTZXJ2aWNlQ29uZmlnLlJlYWQuQWxsIERldmljZU1hbmFnZW1lbnRTZXJ2aWNlQ29uZmlnLlJlYWRXcml0ZS5BbGwgRGlyZWN0b3J5LkFjY2Vzc0FzVXNlci5BbGwgRGlyZWN0b3J5LlJlYWRXcml0ZS5BbGwgRmlsZXMuUmVhZFdyaXRlLkFsbCBHcm91cC5SZWFkV3JpdGUuQWxsIElkZW50aXR5Umlza0V2ZW50LlJlYWQuQWxsIE1haWwuUmVhZFdyaXRlIE1haWxib3hTZXR0aW5ncy5SZWFkV3JpdGUgTm90ZXMuUmVhZFdyaXRlLkFsbCBOb3RpZmljYXRpb25zLlJlYWRXcml0ZS5DcmVhdGVkQnlBcHAgb3BlbmlkIFBlb3BsZS5SZWFkIHByb2ZpbGUgUmVwb3J0cy5SZWFkLkFsbCBTaXRlcy5SZWFkV3JpdGUuQWxsIFRhc2tzLlJlYWRXcml0ZSBVc2VyLlJlYWRCYXNpYy5BbGwgVXNlci5SZWFkV3JpdGUgVXNlci5SZWFkV3JpdGUuQWxsIGVtYWlsIiwic2lnbmluX3N0YXRlIjpbImlua25vd25udHdrIiwia21zaSJdLCJzdWIiOiJ2a1NhVzNWV0tLZnBydXR4NzVGWkFmMzI1TU92RmFlOWNBekFIbFl1a3JrIiwidGlkIjoiNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3IiwidW5pcXVlX25hbWUiOiJtbWFpbmVyQG1pY3Jvc29mdC5jb20iLCJ1cG4iOiJtbWFpbmVyQG1pY3Jvc29mdC5jb20iLCJ1dGkiOiJCaE42WmVMSlFVdUVaeFdoUHdVRkFBIiwidmVyIjoiMS4wIiwieG1zX3N0Ijp7InN1YiI6InVGYVZvNzBhaTVDNTNpbGFBV01fUGtGazhMSnBOR3R1aW5BNGpGZzQtVEkifSwieG1zX3RjZHQiOjEyODkyNDE1NDd9.egE-Od3eGNynVZ_M9b_D4W849484DT1A-g7eMvDRMNMtYK6vNxwLZqqM8ZC-lvQHD-Z3UeMXlpXT003cqdwB5WZsbj8puHohpwowV_-CP80wpGSS80VjxYbXD6nYLjpsm7Z2KkKY65VhiNQeVwz06zt984ujkagCCN6bduwnlKNO0FtVZuuZxv8Ap6OdjZKB-1BNI2_8FXNZSujIjQ0edDSenWUP9g5sPumIFlFdATjsLB-xMqcgBkS0ZXo4LGJn1wZNlzo0TnKS_xLMon4GE9ZWpiT0G2FLDwk7K7dT_Wv0lJgZyTCELDPJce-Kc_uIpCIVltJR6KG4yGezbi7o5A";
                                 requestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("bearer", token);
 
                             });
@@ -49,39 +49,17 @@ namespace Microsoft.Graph.DotnetCore.Core.Test.Tasks
         }
     }
 
-    /// <summary>
-    /// Customer will need this as it wraps the entire response body.
-    /// We can probably hide this from the customer. 
-    /// </summary>
-    //[JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-    //public class MyMessagePageResponse<TPage, TPageEntity>
-    //{
-       
-    //    /// <summary>
-    //    /// Contains the actual page of responses
-    //    /// </summary>
-    //    [JsonProperty(NullValueHandling = NullValueHandling.Ignore, PropertyName = "value", Required = Newtonsoft.Json.Required.Default)]
-    //    public TPage Value { get; set; }
-
-    //    /// <summary>
-    //    /// Contains nextlink and deltalink
-    //    /// </summary>
-    //    [JsonExtensionData(ReadData = true)]
-    //    public IDictionary<string, object> AdditionalData { get; set; }
-    //}
+    // TODO: Why does a customer need to do this? I think we can get rid of this.
 
     /// <summary>
     /// This is the customer defined page object. 
     /// </summary>
-    
     public class MyMessagePage : CollectionPage<MyMessage>
     {
         public MyMessagePage()
         {
         }
     }
-
-    // TODO: Create a base class for customer to use.
 
     /// <summary>
     /// Customer will need to define a model class. We should have a base class that they 

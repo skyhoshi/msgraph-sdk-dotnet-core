@@ -15,12 +15,26 @@ namespace Microsoft.Graph.Core.Tasks
     /// <typeparam name="TResponse">A user defined page returned in the result set.</typeparam>
     /// <typeparam name="TPage">A user defined page returned in the result set.</typeparam>
     /// <typeparam name="TPageEntity">A user defined page entity returned in the result set.</typeparam>
-    public partial class HttpPageIterator<TPage, TPageEntity> where TPage:ICollectionPage<TPageEntity>
+
+    //
+    ///
+    //public partial class HttpPageIterator<ICollectionPage<TPageEntity>> where TPageEntity:object
+    public partial class HttpPageIterator<TPage, TPageEntity> where TPage : ICollectionPage<TPageEntity>
     {
         private HttpRequestMessage _request;
         private HttpClient _client;
         private Func<TPageEntity, bool> _processPageItemCallback;
+        private Queue<TPageEntity> _pageItemQueue;
         //private ResponseHandler _responseHandler;
+
+        /// <summary>
+        /// The @odata.deltaLink returned from a delta query.
+        /// </summary>
+        public string Deltalink { get; private set; }
+        /// <summary>
+        /// The @odata.nextLink returned in a paged result.
+        /// </summary>
+        public string Nextlink { get; private set; }
 
         /// <summary>
         /// 
@@ -38,7 +52,8 @@ namespace Microsoft.Graph.Core.Tasks
             {
                 _request = request ?? throw new ArgumentNullException(nameof(request)),
                 _client = client ?? throw new ArgumentNullException(nameof(client)),
-                _processPageItemCallback = callback ?? throw new ArgumentNullException(nameof(callback))
+                _processPageItemCallback = callback ?? throw new ArgumentNullException(nameof(callback)),
+                _pageItemQueue = new Queue<TPageEntity>()
                 //_responseHandler = responseHandler ?? throw new ArgumentNullException(nameof(responseHandler))
             };
         }
@@ -60,18 +75,45 @@ namespace Microsoft.Graph.Core.Tasks
         public async Task IterateAsync(CancellationToken cancellationToken)
         {
             bool shouldContinueInterpageIteration = true;
-            shouldContinueInterpageIteration = await InterpageIterateAsync(cancellationToken);
+
+            // TODO: Handle resume iteration, for both the TPageEntity in queue, and the 
+            while (shouldContinueInterpageIteration)
+            {
+                shouldContinueInterpageIteration = await InterpageIterateAsync(cancellationToken).ConfigureAwait(false);
+
+                
+                // TODO: IntrapageIterateAsync 
+            }
+
+            // TODO: Final IntrapageIterateAsync in case the iteration 
         }
 
         private async Task<bool> InterpageIterateAsync(CancellationToken cancellationToken)
         {
-            HttpResponseMessage hrm = await _client.SendAsync(_request);
-            
-            // TODO: Handle both server and client errors. Pass through service errors.
+            HttpResponseMessage hrm = null;
+
+            try
+            {
+                hrm = await _client.SendAsync(_request, cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception)
+            {
+                // TODO: Handle both server and client errors. Pass through service errors.
+            }
 
             var responseHander = new ResponseHandler();
 
-            var pageObject = await responseHander.HandleResponse<MyMessagePageResponse<TPage, TPageEntity>>(hrm);
+            var pageObject = await responseHander.HandleResponse <MyMessagePageResponse<TPage>>(hrm);
+
+            // Add all of the items returned in the response to the queue.
+            // for processing by the Func<TPageEntity, bool>
+            if (pageObject.Value.Count > 0)
+            {
+                foreach (TPageEntity entity in pageObject.Value)
+                {
+                    _pageItemQueue.Enqueue(entity);
+                }
+            }
 
             bool hasMorePagesOfData = pageObject.AdditionalData.TryGetValue("@odata.nextLink", out object nextPageLink);
 
@@ -81,15 +123,14 @@ namespace Microsoft.Graph.Core.Tasks
             // TODO: Support DeltaLink.
             // TODO: Make this resumeable.
 
-            return false;
+            return hasMorePagesOfData;
         }
     }
     /// <summary>
-    /// Customer will need this as it wraps the entire response body.
-    /// We can probably hide this from the customer. 
+    /// This  wraps the ICollectionPage&lt;PageEntity&gt; created by the customer.
     /// </summary>
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-    public class MyMessagePageResponse<TPage, TPageEntity>
+    internal class MyMessagePageResponse<TPage>
     {
 
         /// <summary>
