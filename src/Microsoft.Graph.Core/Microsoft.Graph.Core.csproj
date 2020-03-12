@@ -4,7 +4,7 @@
     <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
     <AssemblyTitle>Microsoft Graph Core Client Library</AssemblyTitle>
     <Authors>Microsoft</Authors>
-    <TargetFrameworks>netstandard2.0;net461;MonoAndroid80;Xamarin.iOS10</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net461;MonoAndroid80;Xamarin.iOS10;netcoreapp3.1</TargetFrameworks>
     <PreserveCompilationContext>false</PreserveCompilationContext>
     <AssemblyName>Microsoft.Graph.Core</AssemblyName>
     <PackageId>Microsoft.Graph.Core</PackageId>
@@ -58,6 +58,9 @@
   
   <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
   </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
+    <ProjectReference Include="..\..\active-directory-aspnetcore-webapp-openidconnect-v2\Microsoft.Identity.Web\Microsoft.Identity.Web.csproj" />
+  </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="System.Security.Claims" Version="4.3.0" />
   </ItemGroup>
@@ -83,8 +86,8 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.6.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.7.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.9.0" />
     <PackageReference Include="Azure.Core" Version="1.0.1" />
   </ItemGroup>
 </Project>

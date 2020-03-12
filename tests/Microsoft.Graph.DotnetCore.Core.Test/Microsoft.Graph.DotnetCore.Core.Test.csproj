@@ -60,6 +60,7 @@
 	<Reference Include="System.Core" />
 	<Reference Include="System.Xml" />
 	<Reference Include="System.Runtime.Serialization" />
+  <PackageReference Include="System.Net.Http" Version="4.3.3" />
   </ItemGroup>
   
   <ItemGroup Condition=" '$(TargetFramework)' == 'MonoAndroid80' ">
@@ -69,6 +70,7 @@
 	<Reference Include="System.Core" />
 	<Reference Include="System.Xml" />
 	<Reference Include="System.Runtime.Serialization" />
+  <PackageReference Include="System.Net.Http" Version="4.3.3" />
   </ItemGroup>
 
   <ItemGroup>
