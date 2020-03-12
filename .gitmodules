@@ -1,0 +1,3 @@
+[submodule "active-directory-aspnetcore-webapp-openidconnect-v2"]
+	path = active-directory-aspnetcore-webapp-openidconnect-v2
+	url = https://github.com/Azure-Samples/active-directory-aspnetcore-webapp-openidconnect-v2.git
